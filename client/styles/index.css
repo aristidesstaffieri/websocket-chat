@@ -8,7 +8,7 @@ body {
   font-family: Helvetica, sans-serif;
 }
 
-h1, h5 {
+h1, h5, form {
   margin: 0
 }
 
@@ -37,10 +37,31 @@ h1, h5 {
 .panel_items {
   margin: 10px 0;
   color: var(--main-blue);
+  cursor: pointer;
+}
+
+.panel_items:hover {
+  opacity: 0.5;
+}
+
+.panel_items.active {
+  color: green;
 }
 
 .active_chat_panel {
   height: 100%;
+  display: flex;
+  flex-direction: column;
   flex: 3;
+  border: 1px solid #000;
+}
+
+.conversation {
+  flex: 3;
+  border: 1px solid #000;
+}
+
+.chat_form {
+  flex: 1;
   border: 1px solid #000;
 }
