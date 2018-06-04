@@ -1,0 +1,29 @@
+{
+  "name": "chat-app",
+  "version": "1.0.0",
+  "description": "A simple chat app demo using node, react, and websockets",
+  "main": "index.js",
+  "scripts": {
+    "server": "node server/index.js",
+    "client": "parcel client/index.html"
+  },
+  "keywords": [
+    "JS",
+    "React",
+    "Node"
+  ],
+  "author": "Aristides Staffieri <aristides@aristidesstaffieri.com>",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.18.3",
+    "boom": "^7.2.0",
+    "cors": "^2.8.4",
+    "express": "^4.16.3",
+    "parcel-bundler": "^1.8.1",
+    "prop-types": "^15.6.1",
+    "react": "^16.4.0",
+    "react-dom": "^16.4.0",
+    "socket.io": "^2.1.1",
+    "socket.io-client": "^2.1.1"
+  }
+}
