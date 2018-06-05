@@ -28,7 +28,8 @@ io.on('connection', function(socket){
 
   socket.on('private_msg', function(data){
     console.info('message received', data)
-    socket.to(data.id).emit('message', data.msg)
+    socket.to(data.id).emit('message::to', data.msg)
+    // store from msg with userId
   })
 
 

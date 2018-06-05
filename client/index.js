@@ -11,11 +11,14 @@ class Messages extends React.Component {
   }
 
   render() {
-    return (
-      <div>
-        { this.props.messages }
+    return [
+      <div className="to" key="to">
+        { this.props.messages.to }
+      </div>,
+      <div className="from" key="from">
+        { this.props.messages.from }
       </div>
-    )
+    ]
   }
 }
 
@@ -108,7 +111,10 @@ class ChatApp extends React.Component {
       connections: [],
       userId: null,
       activeItem: null,
-      messages: []
+      messages: {
+        to: [],
+        from: []
+      }
     }
 
     this.setActiveItem = this.setActiveItem.bind(this)
@@ -122,8 +128,12 @@ class ChatApp extends React.Component {
       userId: id
     }))
 
-    this.state.socket.on('message', msg => this.setState({
-      messages: this.state.messages.concat([msg])
+    this.state.socket.on('message::to', msg => this.setState({
+      messages: Object.assign(
+        {},
+        this.state.messages,
+        { to: this.state.messages.to.concat([msg]) }
+      )
     }))
   }
 
@@ -134,13 +144,20 @@ class ChatApp extends React.Component {
   }
 
   sendMessage(msg) {
-    console.log(this.state.socket)
-    this.state.socket.emit('private_msg', { id: this.state.activeItem, msg })
+    const message = {
+      id: this.state.activeItem,
+      userId: this.state.userId,
+      msg
+    }
+    this.state.socket.emit('private_msg', message)
+    this.setState({
+      messages: Object.assign(
+        {},
+        this.state.messages,
+        { from: this.state.messages.from.concat([msg]) }
+      )
+    })
   }
-
-  // sendMessage(msg) {
-  //   // this.state.socket.emit
-  // }
 
   render () {
     const { connections, userId, activeItem, messages } = this.state
