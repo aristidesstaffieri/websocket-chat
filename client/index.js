@@ -48,8 +48,10 @@ class InputField extends React.Component {
   render() {
     return (
       <form onSubmit={ this.handleSubmit } className="chat_form">
-        <input name="chat_input" type="text" value={ this.state.value } onChange={ this.handleChange } />
-        <input type="submit" value="Send" />
+        <div className="inputs">
+          <input name="chat_input" type="text" value={ this.state.value } onChange={ this.handleChange } />
+          <input type="submit" value="Send" />
+        </div>
       </form>
     )
   }
