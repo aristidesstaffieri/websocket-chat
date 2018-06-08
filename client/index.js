@@ -4,6 +4,9 @@ import ReactDOM from 'react-dom'
 import io from 'socket.io-client'
 
 import './styles/index.css'
+import { getConvoId } from '../utils/utils.js'
+
+const SERVER_URL = 'http://localhost:3000'
 
 class Messages extends React.Component {
   constructor(props) {
@@ -11,12 +14,13 @@ class Messages extends React.Component {
   }
 
   render() {
+    const { messages={ to: [], from: [] } } = this.props
     return [
       <div className="to" key="to">
-        { this.props.messages.to }
+        { messages.to }
       </div>,
       <div className="from" key="from">
-        { this.props.messages.from }
+        { messages.from }
       </div>
     ]
   }
@@ -107,18 +111,19 @@ class ChatApp extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      socket: io('http://localhost:3000'),
+      socket: io(SERVER_URL),
       connections: [],
       userId: null,
       activeItem: null,
       messages: {
         to: [],
-        from: []
+        from : []
       }
     }
 
     this.setActiveItem = this.setActiveItem.bind(this)
     this.sendMessage = this.sendMessage.bind(this)
+    this.getConversation = this.getConversation.bind(this)
 
     this.state.socket.on('active connections', connections => this.setState({
       connections: connections
@@ -141,6 +146,7 @@ class ChatApp extends React.Component {
     this.setState({
       activeItem: item
     })
+    this.getConversation(this.state.userId, item)
   }
 
   sendMessage(msg) {
@@ -157,6 +163,35 @@ class ChatApp extends React.Component {
         { from: this.state.messages.from.concat([msg]) }
       )
     })
+  }
+
+  getConversation(toId, fromId) {
+    if (!toId || !fromId) { return }
+    this.setState({ isLoading: true })
+
+    const dataKey = getConvoId(toId, fromId)
+    const url = `${SERVER_URL}/conversations/${dataKey}`
+
+    fetch(url)
+      .then(res => res.json())
+      .then(data => {
+        var messages = Object.assign(
+          {},
+          this.state.messages,
+          {
+            to: data[this.state.activeItem] || [],
+            from: data[this.state.userId] || []
+          }
+        )
+        this.setState({
+          isLoading: false,
+          messages
+        })
+      })
+      .catch(err => {
+        this.setState({ isLoading: false })
+        throw(err)
+      })
   }
 
   render () {
