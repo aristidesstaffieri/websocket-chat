@@ -9,20 +9,23 @@ const io = require('socket.io')(http)
 
 /*
 * Storing conversations by ID, [to::from]: {userId: [], userId: []}
+* and active conversation in the 'members' key
 */
 const cache = require('memory-cache')
 cache.put('members', []) //init members
 
 const { getConvoId } = require('../utils/utils.js')
 
-const PORT = 3000
+const PORT = process.env.port || 3000
 
 app.use(cors())
 app.use(bodyParser.json())
 
+const getMembers = (store) => store.get('members') || []
+
 const disconnect = (id, store) => {
   console.info('user disconnected', id)
-  const connections = store.get('members')
+  const connections = getMembers(store)
   const activeConnections = connections.filter(item => item !== id)
   store.put('members', activeConnections)
   io.emit('active connections', activeConnections)
@@ -56,7 +59,7 @@ const sendMsg = (data, socket, store) => {
 }
 
 const connect = (socket, store) => {
-  const connections = store.get('members') || []
+  const connections = getMembers(store)
   console.info('a user connected', socket.id)
   store.put('members', connections.concat(socket.id))
 
